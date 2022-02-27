@@ -4,6 +4,7 @@ mod server {
     use std::collections::HashSet;
     use std::collections::HashMap;
 
+    #[derive(Copy, Clone)]
     pub enum Method {
         GET,
         PUT,
@@ -15,14 +16,14 @@ mod server {
     pub struct Response {
         pub code: u16
     }
-    #[derive(Hash)]
+    #[derive(Hash, Clone, Copy)]
     pub struct Endpoint {
-        pub(crate) method: String,
-        pub(crate) path: String,
+        pub(crate) method: Method,
+        pub(crate) path: &'static str,
     }
     pub struct Api {
-        pub(crate) endpoints: HashSet<&'static Endpoint>,
-        pub(crate) bindings: HashMap<&'static Endpoint, fn(Request) -> Response>
+        pub(crate) endpoints: HashSet<Endpoint>,
+        pub(crate) bindings: HashMap<Endpoint, fn(Request) -> Response>
     }
 
     impl Api {
@@ -30,10 +31,10 @@ mod server {
             return Api { endpoints: HashSet::new(), bindings : HashMap::new() };
         }
 
-        pub fn add_endpoint(&mut self, method: String, path: String, handler: fn(Request) -> Response) {
-            let endpoint = Endpoint { method: method, path: path };
-            self.endpoints.insert(&endpoint);
-            self.bindings.insert(&endpoint, handler);
+        pub fn add_endpoint(&mut self, method: Method, path: &str, handler: fn(Request) -> Response) {
+            let endpoint = Endpoint { method, path };
+            self.endpoints.insert(endpoint);
+            self.bindings.insert(endpoint, handler);
         }
 
         pub fn start() {
@@ -62,8 +63,8 @@ mod tests {
     #[test]
     fn test_adding_an_endpoint() {
         let mut api = server::Api::new();
-        api.add_endpoint(String::from("GET"), String::from("/api/test"), api_test_handler);
-        let my_model = server::Endpoint { method: String::from("GET"), path: String::from("/api/test") };
+        api.add_endpoint(server::Method::GET, "/api/test", api_test_handler);
+        let my_model = server::Endpoint { method: server::Method::GET, path: "/api/test" };
         assert!(api.endpoints.contains(&my_model));
     }
 }
