@@ -1,8 +1,32 @@
 
+/// # `server` namespace
+/// Has all the high level interactions to create and run a RESTful API server
+///
+/// ## Method
+/// An enum of allowed operations on endpoints
+///
+/// ## Response
+/// The response that the requester will receive (Headers, Content (Text or JSON), and parameters)
+///
+/// ## Request
+/// The incoming request with Headers, Content (Text or JSON), and parameters
+///
+/// ## Endpoint
+/// A combination of the operation method and a path string
+///
+/// ## Api
+/// A collections of endpoints that can be run to start the REST server
 mod server {
     use std;
     use std::collections::HashMap;
 
+    /// # Method
+    /// An enum of allowed operations on endpoints
+    /// - `GET`
+    /// - `PUT`
+    /// - `POST`
+    /// - `DELETE`
+    /// - `OPTIONS`
     #[derive(Hash, PartialEq)]
     pub enum Method {
         GET,
@@ -20,6 +44,21 @@ mod server {
         pub(crate) method: Method,
         pub(crate) path: String,
     }
+    /// # Api
+    /// A collections of endpoints that can be run to start the REST server
+    ///
+    /// ## Example
+    /// ```
+    /// use server;
+    /// use std;
+    ///
+    /// let mut api = Api::new();
+    /// fn handle_root_request(request: Request) -> Response {
+    ///     println!("Received request on path '/'!");
+    /// }
+    /// api.add_endpoint(Method::GET, String::from("/"), handle_root_request);
+    /// api.start();
+    /// ```
     pub struct Api {
         pub(crate) endpoints: HashMap<Endpoint, fn(Request) -> Response>
     }

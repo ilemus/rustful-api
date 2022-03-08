@@ -1,7 +1,9 @@
 [package]
 name = "rustful-api"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
+license = "MIT"
+description = "An easy way to create and start a RESTful API without worrying about a lot of boilerplate code"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
