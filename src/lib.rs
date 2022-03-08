@@ -1,5 +1,10 @@
 
-/// # `server` namespace
+//! # RUSTful-API
+//!
+//! A library to make creating and starting a RESTful API server quick, easy, and secure
+
+/*
+/// # `rustful_api` namespace
 /// Has all the high level interactions to create and run a RESTful API server
 ///
 /// ## Method
@@ -16,9 +21,11 @@
 ///
 /// ## Api
 /// A collections of endpoints that can be run to start the REST server
-mod server {
+ */
+mod rustful_api {
     use std;
     use std::collections::HashMap;
+    use std::net::TcpListener;
 
     /// # Method
     /// An enum of allowed operations on endpoints
@@ -49,12 +56,13 @@ mod server {
     ///
     /// ## Example
     /// ```
-    /// use server;
+    /// use rustful_api;
     /// use std;
     ///
     /// let mut api = Api::new();
     /// fn handle_root_request(request: Request) -> Response {
     ///     println!("Received request on path '/'!");
+    ///     return Response {204};
     /// }
     /// api.add_endpoint(Method::GET, String::from("/"), handle_root_request);
     /// api.start();
@@ -73,8 +81,14 @@ mod server {
             self.endpoints.insert(endpoint, handler);
         }
 
-        pub fn start() {
-
+        pub fn start(&mut self, bind_address: Option<String>, bind_port: Option<u32>) {
+            let hostname = bind_address.unwrap_or(String::from("127.0.0.1"));
+            let port = bind_port.unwrap_or(8080);
+            let tcp_listener = TcpListener::bind(String::from("{}:{}", hostname, port));
+            for stream in tcp_listener.incoming() {
+                let in_stream = stream.unwrap();
+                println!("Connection established!");
+            }
         }
     }
 
